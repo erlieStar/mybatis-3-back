@@ -45,14 +45,17 @@ import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.LocalCacheScope;
 import org.apache.ibatis.transaction.TransactionFactory;
 import org.apache.ibatis.type.JdbcType;
+import org.apache.ibatis.type.TypeAliasRegistry;
 import org.apache.ibatis.type.TypeHandler;
 
 /**
  * @author Clinton Begin
  * @author Kazuki Shimizu
+ * XML配置构建器，建造者模式
  */
 public class XMLConfigBuilder extends BaseBuilder {
 
+  /** 是否已经解析 */
   private boolean parsed;
   private final XPathParser parser;
   private String environment;
@@ -91,31 +94,92 @@ public class XMLConfigBuilder extends BaseBuilder {
     this.parser = parser;
   }
 
+  /**
+   * 解析mybatis的配置文件
+   * @return
+   */
   public Configuration parse() {
     if (parsed) {
       throw new BuilderException("Each XMLConfigBuilder can only be used once.");
     }
     parsed = true;
+    // 最开始的节点为configuration
     parseConfiguration(parser.evalNode("/configuration"));
     return configuration;
   }
 
+  /**
+  <?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+          "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration><!--配置-->
+	<properties/><!--属性-->
+	<settings><!--设置-->
+		<setting name="" value=""/>
+	</settings>
+	<typeAliases/><!--类型命名-->
+	<typeHandlers/><!--类型处理器-->
+	<objectFactory type=""/><!--对象工厂-->
+	<plugins><!--插件-->
+		<plugin interceptor=""/>
+	</plugins>
+	<environments default=""><!--配置环境-->
+		<environment id="">
+			<transactionManager type=""/><!--事务管理器-->
+			<dataSource type=""/><!--数据源-->
+		</environment>
+	</environments>
+	<databaseIdProvider type=""/><!--数据库厂商标识-->
+	<mappers/><!--映射器-->
+</configuration>
+
+   */
   private void parseConfiguration(XNode root) {
     try {
       //issue #117 read properties first
+      // Configuration -> variables（变量）
+      // protected Properties variables = new Properties();
       propertiesElement(root.evalNode("properties"));
+
       Properties settings = settingsAsProperties(root.evalNode("settings"));
       loadCustomVfs(settings);
+
+      // Configuration -> typeAliasRegistry
+      // protected final TypeAliasRegistry typeAliasRegistry = new TypeAliasRegistry();
+      // TypeAliasRegistry用Map<String, Class<?>>来保存映射关系
+      // TypeAliasRegistry内置了很多别名，看构造函数就知道了
       typeAliasesElement(root.evalNode("typeAliases"));
+
+      // Configuration -> interceptorChain
+      // protected final InterceptorChain interceptorChain = new InterceptorChain();
+      // InterceptorChain里面用List<Interceptor> interceptors = new ArrayList<Interceptor>();来保存拦截器
+      // 所以自定义插件要实现Interceptor接口
       pluginElement(root.evalNode("plugins"));
+
+      // 可以自定义objectFactory
+      // TODO ERLIE
       objectFactoryElement(root.evalNode("objectFactory"));
       objectWrapperFactoryElement(root.evalNode("objectWrapperFactory"));
       reflectorFactoryElement(root.evalNode("reflectorFactory"));
+
+      // 设置各种配置项目，可以看默认值
       settingsElement(settings);
       // read it after objectFactory and objectWrapperFactory issue #631
       environmentsElement(root.evalNode("environments"));
+
+      // 支持不同数据库，很少用到
+      // Configuration -> protected String databaseId;
       databaseIdProviderElement(root.evalNode("databaseIdProvider"));
+
+      // Configuration -> typeHandlerRegistry
+      // protected final TypeHandlerRegistry typeHandlerRegistry = new TypeHandlerRegistry();
       typeHandlerElement(root.evalNode("typeHandlers"));
+
+      // Configuration -> typeHandlerRegistry
+      // protected final MapperRegistry mapperRegistry = new MapperRegistry(this);
+      // mapperRegistry用Map<Class<?>, MapperProxyFactory<?>> knownMappers = new HashMap<Class<?>, MapperProxyFactory<?>>();
+      // 来保存映射关系
       mapperElement(root.evalNode("mappers"));
     } catch (Exception e) {
       throw new BuilderException("Error parsing SQL Mapper Configuration. Cause: " + e, e);

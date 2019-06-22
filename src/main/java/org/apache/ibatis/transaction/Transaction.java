@@ -23,6 +23,8 @@ import java.sql.SQLException;
  * Handles the connection lifecycle that comprises: its creation, preparation, commit/rollback and close. 
  *
  * @author Clinton Begin
+ *
+ * 事务管理，内部包含了一个Connection
  */
 public interface Transaction {
 
