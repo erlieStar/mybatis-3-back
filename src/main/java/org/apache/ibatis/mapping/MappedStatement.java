@@ -33,8 +33,10 @@ import org.apache.ibatis.session.Configuration;
  */
 public final class MappedStatement {
 
+  /** com/makenv/part1/mapper/ReoleMapper.xml **/
   private String resource;
   private Configuration configuration;
+  /** com.makenv.part1.mapper.RoleMapper.getRole **/
   private String id;
   private Integer fetchSize;
   private Integer timeout;

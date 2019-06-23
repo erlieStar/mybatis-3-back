@@ -27,12 +27,14 @@ import org.apache.ibatis.session.ResultHandler;
 
 /**
  * @author Clinton Begin
+ * 语句处理器
  */
 public interface StatementHandler {
 
   Statement prepare(Connection connection, Integer transactionTimeout)
       throws SQLException;
 
+  /** 设置参数 */
   void parameterize(Statement statement)
       throws SQLException;
 

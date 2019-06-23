@@ -46,6 +46,10 @@ import org.apache.ibatis.type.TypeHandlerRegistry;
 
 /**
  * @author Clinton Begin
+ * 执行器基类
+ * 模板方法模式
+ * 子类只需要实现4个基本方法就能完成对数据库的操作
+ * doUpdate，doQuery，doQueryCursor，doFlushStatement
  */
 public abstract class BaseExecutor implements Executor {
 

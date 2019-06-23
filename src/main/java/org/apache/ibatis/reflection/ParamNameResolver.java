@@ -46,12 +46,17 @@ public class ParamNameResolver {
    * <li>aMethod(int a, RowBounds rb, int b) -&gt; {{0, "0"}, {2, "1"}}</li>
    * </ul>
    */
+
+  /** 解析参数的名字，在xml中 #{} 使用，key为第几个，从0开始，value为@Param()中指定的或者自动生成的 **/
   private final SortedMap<Integer, String> names;
 
   private boolean hasParamAnnotation;
 
   public ParamNameResolver(Configuration config, Method method) {
     final Class<?>[] paramTypes = method.getParameterTypes();
+
+    // 第一个维度是参数的个数
+    // 第二个维度是每次参数的注解数，因为一个参数可以加好几个注解
     final Annotation[][] paramAnnotations = method.getParameterAnnotations();
     final SortedMap<Integer, String> map = new TreeMap<Integer, String>();
     int paramCount = paramAnnotations.length;
@@ -71,17 +76,20 @@ public class ParamNameResolver {
       }
       if (name == null) {
         // @Param was not specified.
+        // useActualParamName 设置为true时，传递参数需要用#{arg0}-#{argn} 或者 #{param1}-#{param2}
         if (config.isUseActualParamName()) {
           name = getActualParamName(method, paramIndex);
         }
         if (name == null) {
           // use the parameter index as the name ("0", "1", ...)
           // gcode issue #71
+          // 如果没有
           name = String.valueOf(map.size());
         }
       }
       map.put(paramIndex, name);
     }
+    // 产生一个只读的map
     names = Collections.unmodifiableSortedMap(map);
   }
 
@@ -114,8 +122,10 @@ public class ParamNameResolver {
   public Object getNamedParams(Object[] args) {
     final int paramCount = names.size();
     if (args == null || paramCount == 0) {
+      // 如果没有参数
       return null;
     } else if (!hasParamAnnotation && paramCount == 1) {
+      // 如果只有一个参数
       return args[names.firstKey()];
     } else {
       final Map<String, Object> param = new ParamMap<Object>();
@@ -123,6 +133,8 @@ public class ParamNameResolver {
       for (Map.Entry<Integer, String> entry : names.entrySet()) {
         param.put(entry.getValue(), args[entry.getKey()]);
         // add generic param names (param1, param2, ...)
+        // 先自动生成参数名
+        // GENERIC_NAME_PREFIX = param
         final String genericParamName = GENERIC_NAME_PREFIX + String.valueOf(i + 1);
         // ensure not to overwrite parameter named with @Param
         if (!names.containsValue(genericParamName)) {

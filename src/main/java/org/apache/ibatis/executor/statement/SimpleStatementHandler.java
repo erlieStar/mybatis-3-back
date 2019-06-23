@@ -33,6 +33,8 @@ import org.apache.ibatis.session.RowBounds;
 
 /**
  * @author Clinton Begin
+ * 简单语句处理器
+ * 这个类中boundSql.getSql() 不存在占位符
  */
 public class SimpleStatementHandler extends BaseStatementHandler {
 

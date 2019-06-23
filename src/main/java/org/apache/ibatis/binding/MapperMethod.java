@@ -42,6 +42,7 @@ import java.util.*;
  */
 public class MapperMethod {
 
+  /** com.makenv.part1.mapper.RoleMapper.getRole */
   private final SqlCommand command;
   private final MethodSignature method;
 
@@ -215,6 +216,7 @@ public class MapperMethod {
 
     public SqlCommand(Configuration configuration, Class<?> mapperInterface, Method method) {
       final String methodName = method.getName();
+      // 获得这个方法的声明类
       final Class<?> declaringClass = method.getDeclaringClass();
       MappedStatement ms = resolveMappedStatement(mapperInterface, methodName, declaringClass,
           configuration);
@@ -251,6 +253,8 @@ public class MapperMethod {
       } else if (mapperInterface.equals(declaringClass)) {
         return null;
       }
+
+      // 查看父类中是否有
       for (Class<?> superInterface : mapperInterface.getInterfaces()) {
         if (declaringClass.isAssignableFrom(superInterface)) {
           MappedStatement ms = resolveMappedStatement(superInterface, methodName,

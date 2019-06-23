@@ -34,6 +34,7 @@ public interface Executor {
 
   ResultHandler NO_RESULT_HANDLER = null;
 
+  /** 执行 update insert delete 三种类型的SQL语句 */
   int update(MappedStatement ms, Object parameter) throws SQLException;
 
   <E> List<E> query(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, CacheKey cacheKey, BoundSql boundSql) throws SQLException;
@@ -42,6 +43,7 @@ public interface Executor {
 
   <E> Cursor<E> queryCursor(MappedStatement ms, Object parameter, RowBounds rowBounds) throws SQLException;
 
+  /** 批量执行语句 */
   List<BatchResult> flushStatements() throws SQLException;
 
   void commit(boolean required) throws SQLException;
