@@ -19,6 +19,7 @@ import org.apache.ibatis.executor.ErrorContext;
 
 /**
  * @author Clinton Begin
+ * 异常工厂
  */
 public class ExceptionFactory {
 
@@ -27,6 +28,7 @@ public class ExceptionFactory {
   }
 
   public static RuntimeException wrapException(String message, Exception e) {
+    // .message(message).cause(e)是典型的建造者模式
     return new PersistenceException(ErrorContext.instance().message(message).cause(e).toString(), e);
   }
 

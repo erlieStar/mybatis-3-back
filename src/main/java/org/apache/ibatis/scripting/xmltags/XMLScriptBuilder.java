@@ -31,6 +31,7 @@ import org.w3c.dom.NodeList;
 
 /**
  * @author Clinton Begin
+ * 解析各个节点的sql部分，如 select insert 标签里面的内容
  */
 public class XMLScriptBuilder extends BaseBuilder {
 

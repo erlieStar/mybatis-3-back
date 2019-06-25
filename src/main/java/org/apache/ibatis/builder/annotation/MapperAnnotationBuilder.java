@@ -91,6 +91,7 @@ import org.apache.ibatis.type.UnknownTypeHandler;
 
 /**
  * @author Clinton Begin
+ * 注解的方式构建mapper，如在相应的接口上用@Select @Delete
  */
 public class MapperAnnotationBuilder {
 

@@ -111,8 +111,10 @@ public class TypeAliasRegistry {
       String key = string.toLowerCase(Locale.ENGLISH);
       Class<T> value;
       if (TYPE_ALIASES.containsKey(key)) {
+        // 别名中能找到就用别名
         value = (Class<T>) TYPE_ALIASES.get(key);
       } else {
+        // 否则从class中加载
         value = (Class<T>) Resources.classForName(string);
       }
       return value;

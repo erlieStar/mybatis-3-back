@@ -105,6 +105,14 @@ public class Configuration {
   protected boolean multipleResultSetsEnabled = true;
   protected boolean useGeneratedKeys;
   protected boolean useColumnLabel = true;
+  /** 二级缓存开启 */
+
+  /**
+   * 二级缓存跟3个配置有关
+   * 1. mybatis全局配置文件中的setting中的cacheEnabled需要为true(默认为true，不设置也行)
+   * 2. mapper配置文件中需要加入<cache>节点
+   * 3. mapper配置文件中的select节点需要加上属性useCache需要为true(默认为true，不设置也行)
+   */
   protected boolean cacheEnabled = true;
   protected boolean callSettersOnNulls;
   protected boolean useActualParamName = true;

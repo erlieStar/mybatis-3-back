@@ -29,6 +29,7 @@ import org.apache.ibatis.transaction.Transaction;
 
 /**
  * @author Clinton Begin
+ * sql执行器，SqlSession执行sql最终通过该接口实现的
  */
 public interface Executor {
 

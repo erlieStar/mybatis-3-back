@@ -35,6 +35,8 @@ import org.apache.ibatis.transaction.Transaction;
 /**
  * @author Clinton Begin
  * @author Eduardo Macarron
+ * 装饰者模式
+ * CachingExecutor 是具体装饰者
  */
 public class CachingExecutor implements Executor {
 
@@ -72,6 +74,7 @@ public class CachingExecutor implements Executor {
 
   @Override
   public int update(MappedStatement ms, Object parameterObject) throws SQLException {
+    // 判断是否需要刷新缓存
     flushCacheIfRequired(ms);
     return delegate.update(ms, parameterObject);
   }

@@ -17,9 +17,11 @@ package org.apache.ibatis.executor;
 
 /**
  * @author Clinton Begin
+ * 错误上线文
  */
 public class ErrorContext {
 
+  /** 获得 \n 不同的操作系统不一样 */
   private static final String LINE_SEPARATOR = System.getProperty("line.separator","\n");
   private static final ThreadLocal<ErrorContext> LOCAL = new ThreadLocal<ErrorContext>();
 

@@ -52,6 +52,7 @@ import org.apache.ibatis.type.TypeHandler;
  * @author Clinton Begin
  * @author Kazuki Shimizu
  * XML配置构建器，建造者模式
+ * 解析mybatis的配置文件，内部会使用XMLMapperBuilder解析各个xml文件
  */
 public class XMLConfigBuilder extends BaseBuilder {
 
@@ -133,7 +134,6 @@ public class XMLConfigBuilder extends BaseBuilder {
 	<databaseIdProvider type=""/><!--数据库厂商标识-->
 	<mappers/><!--映射器-->
 </configuration>
-
    */
   private void parseConfiguration(XNode root) {
     try {
@@ -339,6 +339,7 @@ public class XMLConfigBuilder extends BaseBuilder {
       }
       for (XNode child : context.getChildren()) {
         String id = child.getStringAttribute("id");
+        // 是 environments 标签指定的 environment
         if (isSpecifiedEnvironment(id)) {
           TransactionFactory txFactory = transactionManagerElement(child.evalNode("transactionManager"));
           DataSourceFactory dsFactory = dataSourceElement(child.evalNode("dataSource"));
@@ -420,6 +421,30 @@ public class XMLConfigBuilder extends BaseBuilder {
     }
   }
 
+
+
+  /**
+   *   将包内的映射器接口实现全部注册为映射器
+   *   <mappers>
+   *       <package name="com.makenv.part3.mapper"/>
+   *   </mappers>
+   *
+   *   使用相对于类路径的资源引用
+   *   <mappers>
+   *      <mapper resource="com/makenv/part3/mapper/ProductMapper.xml"/>
+   *   </mappers>
+   *
+   *   使用完全限定资源定位符（URL）
+   *   <mappers>
+   *      <mapper url="file:///var/mappers/ProductMapper.xml"/>
+   *   </mappers>
+   *
+   *   使用映射器接口实现类的完全限定类名
+   *   <mappers>
+   *      <mapper class="com.makenv.part3.mapper.ProductMapper"/>
+   *   </mappers>
+   *
+   */
   private void mapperElement(XNode parent) throws Exception {
     if (parent != null) {
       for (XNode child : parent.getChildren()) {
@@ -430,6 +455,8 @@ public class XMLConfigBuilder extends BaseBuilder {
           String resource = child.getStringAttribute("resource");
           String url = child.getStringAttribute("url");
           String mapperClass = child.getStringAttribute("class");
+
+          // reource 这种配置方式
           if (resource != null && url == null && mapperClass == null) {
             ErrorContext.instance().resource(resource);
             InputStream inputStream = Resources.getResourceAsStream(resource);

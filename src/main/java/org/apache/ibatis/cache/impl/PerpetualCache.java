@@ -24,6 +24,7 @@ import org.apache.ibatis.cache.CacheException;
 
 /**
  * @author Clinton Begin
+ * Cache接口的实现类有多个，大部分都是装饰器，只有PerpetualCache提供了Cache接口的基本实现
  */
 public class PerpetualCache implements Cache {
 

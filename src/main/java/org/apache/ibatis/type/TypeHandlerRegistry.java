@@ -51,6 +51,8 @@ import org.apache.ibatis.reflection.Jdk;
 /**
  * @author Clinton Begin
  * @author Kazuki Shimizu
+ *
+ * 类型处理器注册表
  */
 public final class TypeHandlerRegistry {
 

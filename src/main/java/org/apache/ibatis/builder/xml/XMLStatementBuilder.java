@@ -35,6 +35,8 @@ import org.apache.ibatis.session.Configuration;
 
 /**
  * @author Clinton Begin
+ * 解析xml文件中的各个节点，比如select, insert, update, delete 节点
+ * 内部会使用 XMLScriptBuilder 处理xml中的每个节点，遍历产生的数据会放到 Configuration 的 mappedStatements 中
  */
 public class XMLStatementBuilder extends BaseBuilder {
 
@@ -53,10 +55,28 @@ public class XMLStatementBuilder extends BaseBuilder {
     this.requiredDatabaseId = databaseId;
   }
 
+/*  解析语句(select|insert|update|delete)
+
+  <select
+    id="selectPerson"
+    parameterType="int"
+    parameterMap="deprecated"
+    resultType="hashmap"
+    resultMap="personResultMap"
+    flushCache="false"
+    useCache="true"
+    timeout="10000"
+    fetchSize="256"
+    statementType="PREPARED"
+    resultSetType="FORWARD_ONLY">
+    SELECT * FROM PERSON WHERE ID = #{id}
+  </select>
+  */
   public void parseStatementNode() {
     String id = context.getStringAttribute("id");
     String databaseId = context.getStringAttribute("databaseId");
 
+    // 如果datebaseId不匹配，退出
     if (!databaseIdMatchesCurrent(id, databaseId, this.requiredDatabaseId)) {
       return;
     }
@@ -76,6 +96,7 @@ public class XMLStatementBuilder extends BaseBuilder {
     StatementType statementType = StatementType.valueOf(context.getStringAttribute("statementType", StatementType.PREPARED.toString()));
     ResultSetType resultSetTypeEnum = resolveResultSetType(resultSetType);
 
+    // 获取命令类型 select | insert | update | delete
     String nodeName = context.getNode().getNodeName();
     SqlCommandType sqlCommandType = SqlCommandType.valueOf(nodeName.toUpperCase(Locale.ENGLISH));
     boolean isSelect = sqlCommandType == SqlCommandType.SELECT;
@@ -84,6 +105,7 @@ public class XMLStatementBuilder extends BaseBuilder {
     boolean resultOrdered = context.getBooleanAttribute("resultOrdered", false);
 
     // Include Fragments before parsing
+    // 先解析<include> SQL 片段
     XMLIncludeTransformer includeParser = new XMLIncludeTransformer(configuration, builderAssistant);
     includeParser.applyIncludes(context.getNode());
 
