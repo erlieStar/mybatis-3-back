@@ -34,6 +34,9 @@ import org.apache.ibatis.transaction.TransactionException;
  * @author Clinton Begin
  *
  * @see JdbcTransactionFactory
+ *
+ * jdbc事务，直接利用JDBC的commit rollback
+ * 依赖于从数据源得到的连接来管理事务
  */
 public class JdbcTransaction implements Transaction {
 
@@ -43,6 +46,7 @@ public class JdbcTransaction implements Transaction {
   protected DataSource dataSource;
   protected TransactionIsolationLevel level;
   // MEMO: We are aware of the typo. See #941
+  // 是否自动提交
   protected boolean autoCommmit;
 
   public JdbcTransaction(DataSource ds, TransactionIsolationLevel desiredLevel, boolean desiredAutoCommit) {
