@@ -26,6 +26,7 @@ public class InterceptorChain {
 
   private final List<Interceptor> interceptors = new ArrayList<Interceptor>();
 
+  /** 这里有个特别有意思的地方，先添加的拦截器最后才会执行，因为代理是一层一层套上去的，就像这个函数f(f(f(x))) */
   public Object pluginAll(Object target) {
     for (Interceptor interceptor : interceptors) {
       target = interceptor.plugin(target);

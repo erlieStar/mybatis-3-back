@@ -20,6 +20,7 @@ import java.lang.reflect.Method;
 
 /**
  * @author Clinton Begin
+ * 将要调用的类，方法，参数封装成一个对象，方便传递给拦截器
  */
 public class Invocation {
 
@@ -45,6 +46,7 @@ public class Invocation {
     return args;
   }
 
+  /** 这个方法是给拦截器调用的，拦截器最后会调用这个方法来执行本来要执行的方法，这样就可以在方法前后加上拦截的逻辑了 */
   public Object proceed() throws InvocationTargetException, IllegalAccessException {
     return method.invoke(target, args);
   }

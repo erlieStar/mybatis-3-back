@@ -588,6 +588,7 @@ public class Configuration {
     if (cacheEnabled) {
       executor = new CachingExecutor(executor);
     }
+    // 创建代理对象，插件在这里起作用
     executor = (Executor) interceptorChain.pluginAll(executor);
     return executor;
   }

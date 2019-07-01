@@ -27,9 +27,10 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({})
 public @interface Signature {
+  /** 指定需要拦截的类型 */
   Class<?> type();
-
+  /** 指定需要拦截的方法 */
   String method();
-
+  /** 指定被拦截方法的参数列表 */
   Class<?>[] args();
 }
