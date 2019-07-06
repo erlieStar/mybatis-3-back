@@ -42,6 +42,7 @@ public final class MappedStatement {
   private Integer timeout;
   private StatementType statementType;
   private ResultSetType resultSetType;
+  /** 最终执行的sql字符串就是由SqlSource提供 **/
   private SqlSource sqlSource;
   private Cache cache;
   private ParameterMap parameterMap;

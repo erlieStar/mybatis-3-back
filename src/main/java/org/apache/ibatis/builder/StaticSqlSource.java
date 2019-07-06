@@ -24,6 +24,7 @@ import org.apache.ibatis.session.Configuration;
 
 /**
  * @author Clinton Begin
+ * 处理静态SQL DynamicSqlSource 和 RawSqlSource 最终都会将处理后的SQL封装成 StaticSqlSource
  */
 public class StaticSqlSource implements SqlSource {
 

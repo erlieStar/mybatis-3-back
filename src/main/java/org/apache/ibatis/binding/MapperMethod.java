@@ -51,6 +51,7 @@ public class MapperMethod {
     this.method = new MethodSignature(config, mapperInterface, method);
   }
 
+  /** 这里用到了命令模式 */
   public Object execute(SqlSession sqlSession, Object[] args) {
     Object result;
     switch (command.getType()) {
@@ -231,6 +232,7 @@ public class MapperMethod {
       } else {
         name = ms.getId();
         type = ms.getSqlCommandType();
+        // 执行的时候才会报错
         if (type == SqlCommandType.UNKNOWN) {
           throw new BindingException("Unknown execution method for: " + name);
         }

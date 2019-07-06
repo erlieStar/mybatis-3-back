@@ -155,6 +155,7 @@ public class Configuration {
 
   /** 假如有一个com.makenv.part1.mapper.RoleMapper的接口，里面有一个方法为getRole **/
   /** key值为com.makenv.part1.mapper.RoleMapper.getRole 和 getRole **/
+  /** 命名空间 + id **/
   protected final Map<String, MappedStatement> mappedStatements = new StrictMap<MappedStatement>("Mapped Statements collection");
   protected final Map<String, Cache> caches = new StrictMap<Cache>("Caches collection");
   protected final Map<String, ResultMap> resultMaps = new StrictMap<ResultMap>("Result Maps collection");
@@ -565,6 +566,7 @@ public class Configuration {
   }
 
   public StatementHandler newStatementHandler(Executor executor, MappedStatement mappedStatement, Object parameterObject, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) {
+    // 初始化 RoutingStatementHandler 对象的时候会根据上下文环境决定创建哪个StatementHandler对象
     StatementHandler statementHandler = new RoutingStatementHandler(executor, mappedStatement, parameterObject, rowBounds, resultHandler, boundSql);
     statementHandler = (StatementHandler) interceptorChain.pluginAll(statementHandler);
     return statementHandler;
