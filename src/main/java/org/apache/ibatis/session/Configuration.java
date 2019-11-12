@@ -578,6 +578,7 @@ public class Configuration {
 
   public Executor newExecutor(Transaction transaction, ExecutorType executorType) {
     executorType = executorType == null ? defaultExecutorType : executorType;
+    // 防止粗心大意的人将defaultExecutorType设为null
     executorType = executorType == null ? ExecutorType.SIMPLE : executorType;
     Executor executor;
     if (ExecutorType.BATCH == executorType) {
@@ -587,6 +588,7 @@ public class Configuration {
     } else {
       executor = new SimpleExecutor(this, transaction);
     }
+    // 开启二级缓存，用装饰器模式装饰一下
     if (cacheEnabled) {
       executor = new CachingExecutor(executor);
     }

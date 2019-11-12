@@ -22,12 +22,12 @@ import java.util.Properties;
  */
 public interface Interceptor {
 
-  /** 执行拦截逻辑的方法 */
+  /** 执行拦截逻辑的方法,Invocation只是将动态代理中获取到的一些参数封装成一个对象 */
   Object intercept(Invocation invocation) throws Throwable;
 
   /**
    * target是被拦截的对象，它的作用是给被拦截对象生成一个代理对象，并返回它。
-   * 为了方便，可以直接使用Mybatis中org.apache.ibatis.plugin类的wrap方法（是静态方法）生成代理对象
+   * 为了方便，可以直接使用Mybatis中org.apache.ibatis.plugin.Plugin类的wrap方法（是静态方法）生成代理对象
    */
   Object plugin(Object target);
 

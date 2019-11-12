@@ -47,22 +47,30 @@ public interface Executor {
   /** 批量执行语句 */
   List<BatchResult> flushStatements() throws SQLException;
 
+  /** 提交事务 */
   void commit(boolean required) throws SQLException;
 
+  /** 回滚事务 */
   void rollback(boolean required) throws SQLException;
 
+  /** 创建缓存中用到的CacheKey对象 */
   CacheKey createCacheKey(MappedStatement ms, Object parameterObject, RowBounds rowBounds, BoundSql boundSql);
 
+  /** 根据CacheKey对象查找缓存 **/
   boolean isCached(MappedStatement ms, CacheKey key);
 
+  /** 清空一级缓存 **/
   void clearLocalCache();
 
   void deferLoad(MappedStatement ms, MetaObject resultObject, String property, CacheKey key, Class<?> targetType);
 
+  /** 获取事务对象 **/
   Transaction getTransaction();
 
+  /** 关闭Executor对象 **/
   void close(boolean forceRollback);
 
+  /** 检测Executor是否关闭 **/
   boolean isClosed();
 
   void setExecutorWrapper(Executor executor);
