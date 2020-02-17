@@ -1,23 +1,12 @@
-MyBatis SQL Mapper Framework for Java
-=====================================
+# MyBatis 源码解析
 
-[![Build Status](https://travis-ci.org/mybatis/mybatis-3.svg?branch=master)](https://travis-ci.org/mybatis/mybatis-3)
-[![Coverage Status](https://coveralls.io/repos/mybatis/mybatis-3/badge.svg?branch=master&service=github)](https://coveralls.io/github/mybatis/mybatis-3?branch=master)
-[![Dependency Status](https://www.versioneye.com/user/projects/56199c04a193340f320005d3/badge.svg?style=flat)](https://www.versioneye.com/user/projects/56199c04a193340f320005d3)
-[![Maven central](https://maven-badges.herokuapp.com/maven-central/org.mybatis/mybatis/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.mybatis/mybatis)
-[![License](http://img.shields.io/:license-apache-brightgreen.svg)](http://www.apache.org/licenses/LICENSE-2.0.html)
-[![Stack Overflow](http://img.shields.io/:stack%20overflow-mybatis-brightgreen.svg)](http://stackoverflow.com/questions/tagged/mybatis)
-[![Project Stats](https://www.openhub.net/p/mybatis/widgets/project_thin_badge.gif)](https://www.openhub.net/p/mybatis)
+本源码解析教程基于mybatis3.4.6
 
-![mybatis](http://mybatis.github.io/images/mybatis-logo.png)
+## 在本地debug源码的步骤
 
-The MyBatis SQL mapper framework makes it easier to use a relational database with object-oriented applications.
-MyBatis couples objects with stored procedures or SQL statements using a XML descriptor or annotations.
-Simplicity is the biggest advantage of the MyBatis data mapper over object relational mapping tools.
+1. 从github下载mybatis源码https://github.com/mybatis/mybatis-3
+2. 把mybatis源码pom文件中\<optional\>true\</optional\>，全部改为false
+3. 在工程目录下执行mvn clean install -DskipTests=true，将当前工程安装到本地仓库
+4. 其他工程依赖安装到本地的mybatis源码版本，同时打开2个模块，一个是mybatis源码，一个是要调试的代码，这样debug的时候就会跳进mybatis源码工程
 
-Essentials
-----------
-
-* [See the docs](http://mybatis.github.io/mybatis-3)
-* [Download Latest](https://github.com/mybatis/mybatis-3/releases)
-* [Download Snapshot](https://oss.sonatype.org/content/repositories/snapshots/org/mybatis/mybatis/)
+## 系列章节
