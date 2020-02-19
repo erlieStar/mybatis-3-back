@@ -20,12 +20,15 @@ import java.util.List;
 
 /**
  * @author Clinton Begin
+ *
+ * 用于管理PooledConnection对象
  */
 public class PoolState {
 
   protected PooledDataSource dataSource;
-
+  // 空闲的连接池资源集合
   protected final List<PooledConnection> idleConnections = new ArrayList<PooledConnection>();
+  // 活跃的连接池资源集合
   protected final List<PooledConnection> activeConnections = new ArrayList<PooledConnection>();
   protected long requestCount = 0;
   protected long accumulatedRequestTime = 0;

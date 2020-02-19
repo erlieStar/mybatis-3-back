@@ -30,7 +30,8 @@ import org.apache.ibatis.reflection.ExceptionUtil;
  * 
  * @author Clinton Begin
  * @author Eduardo Macarron
- * 
+ *
+ * 负责打印连接信息和SQL语句，并创建PreparedStatementLogger
  */
 public final class ConnectionLogger extends BaseJdbcLogger implements InvocationHandler {
 

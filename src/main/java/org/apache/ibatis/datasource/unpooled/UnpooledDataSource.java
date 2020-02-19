@@ -225,9 +225,11 @@ public class UnpooledDataSource implements DataSource {
 
   private void configureConnection(Connection conn) throws SQLException {
     if (autoCommit != null && autoCommit != conn.getAutoCommit()) {
+      // 设置是否自动提交
       conn.setAutoCommit(autoCommit);
     }
     if (defaultTransactionIsolationLevel != null) {
+      // 设置隔离级别
       conn.setTransactionIsolation(defaultTransactionIsolationLevel);
     }
   }

@@ -30,7 +30,8 @@ import org.apache.ibatis.reflection.ExceptionUtil;
  * 
  * @author Clinton Begin
  * @author Eduardo Macarron
- * 
+ *
+ * 负责打印参数信息，并创建ResultSetLogger
  */
 public final class PreparedStatementLogger extends BaseJdbcLogger implements InvocationHandler {
 

@@ -30,6 +30,12 @@ public final class LogFactory {
 
   private static Constructor<? extends Log> logConstructor;
 
+  /**
+   * mybatis没有提供日志的实现类，需要接入第三方的日志组件，但是第三方日志都有各自的log级别
+   * mybatis用适配器模式统一提供了trace,debug,warn,error四个级别
+   * 从静态代码块中可以看到第三方日志加载优先级如下
+   * slf4j > commons log > log4j2 > log4j > jdk log
+   */
   static {
     tryImplementation(new Runnable() {
       @Override
