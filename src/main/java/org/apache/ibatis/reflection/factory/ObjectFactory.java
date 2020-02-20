@@ -35,6 +35,8 @@ public interface ObjectFactory {
    * Creates a new object with default constructor. 
    * @param type Object type
    * @return
+   *
+   * 通过无参构造函数创建指定的对象
    */
   <T> T create(Class<T> type);
 
@@ -44,6 +46,8 @@ public interface ObjectFactory {
    * @param constructorArgTypes Constructor argument types
    * @param constructorArgs Constructor argument values
    * @return
+   *
+   * 根据参数列表，选择合适的构造函数创建对象
    */
   <T> T create(Class<T> type, List<Class<?>> constructorArgTypes, List<Object> constructorArgs);
   
@@ -54,6 +58,8 @@ public interface ObjectFactory {
    * @param type Object type
    * @return whether it is a collection or not
    * @since 3.1.0
+   *
+   * 检测指定类是否为集合类型
    */
   <T> boolean isCollection(Class<T> type);
 
