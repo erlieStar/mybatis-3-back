@@ -245,6 +245,7 @@ public class XMLConfigBuilder extends BaseBuilder {
         String interceptor = child.getStringAttribute("interceptor");
         // 解析拦截器中配置的属性，并封装成一个Properties对象
         Properties properties = child.getChildrenAsProperties();
+        // 通过类名示例化一个Interceptor对象
         Interceptor interceptorInstance = (Interceptor) resolveClass(interceptor).newInstance();
         // 可以给拦截器的Properties属性赋值
         interceptorInstance.setProperties(properties);
