@@ -56,7 +56,7 @@ public class XMLMapperBuilder extends BaseBuilder {
   private final XPathParser parser;
   private final MapperBuilderAssistant builderAssistant;
   private final Map<String, XNode> sqlFragments;
-  /** 格式类似如下：com/makenv/part1/mapper/RoleMapper.xml */
+  /** 格式类似如下：com/javashitang/part1/mapper/RoleMapper.xml */
   private final String resource;
 
   @Deprecated
@@ -90,15 +90,21 @@ public class XMLMapperBuilder extends BaseBuilder {
   }
 
   public void parse() {
+    // 判断是否已经加载该配置文件
     if (!configuration.isResourceLoaded(resource)) {
       // 解析配置文件中的mapper节点
       configurationElement(parser.evalNode("/mapper"));
       configuration.addLoadedResource(resource);
+      // 注册mapper接口
       bindMapperForNamespace();
     }
 
+    // 处理解析失败的resultMap节点
+    // 因为如果前面你的resultMap extends 后面你的resultMap，则会解析失败，这时重新解析一次即可
     parsePendingResultMaps();
+    // 处理解析失败的CacheRef节点
     parsePendingCacheRefs();
+    // 处理解析失败的SQL语句节点
     parsePendingStatements();
   }
 
@@ -120,6 +126,7 @@ public class XMLMapperBuilder extends BaseBuilder {
       resultMapElements(context.evalNodes("/mapper/resultMap"));
       // 定义可重用的sql片段
       sqlElement(context.evalNodes("/mapper/sql"));
+      // 解析select insert updata delete 节点
       buildStatementFromContext(context.evalNodes("select|insert|update|delete"));
     } catch (Exception e) {
       throw new BuilderException("Error parsing Mapper XML. The XML location is '" + resource + "'. Cause: " + e, e);
@@ -133,8 +140,10 @@ public class XMLMapperBuilder extends BaseBuilder {
     buildStatementFromContext(list, null);
   }
 
+  // 处理所有的sql语句节点并注册到Configuration对象
   private void buildStatementFromContext(List<XNode> list, String requiredDatabaseId) {
     for (XNode context : list) {
+      // 创建XMLStatementBuilder专门用于解析sql语句节点
       final XMLStatementBuilder statementParser = new XMLStatementBuilder(configuration, builderAssistant, context, requiredDatabaseId);
       try {
         statementParser.parseStatementNode();
@@ -201,17 +210,32 @@ public class XMLMapperBuilder extends BaseBuilder {
     }
   }
 
+
+  /**
+   * 可以在mapper.xml中配置 二级缓存的相关属性
+   *
+   * <cache type="" eviction="" flushInterval=""></cache>
+   */
   private void cacheElement(XNode context) throws Exception {
     if (context != null) {
+      // 获取caceh节点的type属性，默认为PERPETUAL，即PerpetualCache实现类
       String type = context.getStringAttribute("type", "PERPETUAL");
+      // 在这根据PERPETUAL名字找到PerpetualCache类
       Class<? extends Cache> typeClass = typeAliasRegistry.resolveAlias(type);
+      // 解析缓存的淘汰策略，即LRU
       String eviction = context.getStringAttribute("eviction", "LRU");
+      // 找到装饰器类
       Class<? extends Cache> evictionClass = typeAliasRegistry.resolveAlias(eviction);
+      // 缓存的刷新周期
       Long flushInterval = context.getLongAttribute("flushInterval");
+      // 缓存的容量大小
       Integer size = context.getIntAttribute("size");
+      // 缓存是否只读
       boolean readWrite = !context.getBooleanAttribute("readOnly", false);
+      // 缓存是否阻塞
       boolean blocking = context.getBooleanAttribute("blocking", false);
       Properties props = context.getChildrenAsProperties();
+      // 通过builderAssistant创建缓存对象，并添加至configuration
       builderAssistant.useNewCache(typeClass, evictionClass, flushInterval, size, readWrite, blocking, props);
     }
   }
@@ -243,6 +267,11 @@ public class XMLMapperBuilder extends BaseBuilder {
     }
   }
 
+  /**
+   * 拿到所有的resultMap节点
+   * @param list
+   * @throws Exception
+   */
   private void resultMapElements(List<XNode> list) throws Exception {
     for (XNode resultMapNode : list) {
       try {
@@ -259,34 +288,45 @@ public class XMLMapperBuilder extends BaseBuilder {
 
   private ResultMap resultMapElement(XNode resultMapNode, List<ResultMapping> additionalResultMappings) throws Exception {
     ErrorContext.instance().activity("processing " + resultMapNode.getValueBasedIdentifier());
+    // 获取id属性
     String id = resultMapNode.getStringAttribute("id",
         resultMapNode.getValueBasedIdentifier());
+    // 获取type属性
     String type = resultMapNode.getStringAttribute("type",
         resultMapNode.getStringAttribute("ofType",
             resultMapNode.getStringAttribute("resultType",
                 resultMapNode.getStringAttribute("javaType"))));
+    // 描述继承关系
     String extend = resultMapNode.getStringAttribute("extends");
+    // 是否开启自动映射
     Boolean autoMapping = resultMapNode.getBooleanAttribute("autoMapping");
+    // 从别名注册中心获取对象
     Class<?> typeClass = resolveClass(type);
     Discriminator discriminator = null;
+    // 子节点的映射结果集合
     List<ResultMapping> resultMappings = new ArrayList<ResultMapping>();
     resultMappings.addAll(additionalResultMappings);
     List<XNode> resultChildren = resultMapNode.getChildren();
     for (XNode resultChild : resultChildren) {
       if ("constructor".equals(resultChild.getName())) {
+        // 处理constructor字段
         processConstructorElement(resultChild, typeClass, resultMappings);
       } else if ("discriminator".equals(resultChild.getName())) {
         discriminator = processDiscriminatorElement(resultChild, typeClass, resultMappings);
       } else {
+        // 处理<id> <result> <association> <collection>
         List<ResultFlag> flags = new ArrayList<ResultFlag>();
         if ("id".equals(resultChild.getName())) {
           flags.add(ResultFlag.ID);
         }
+        // 创建ResultMapping对象并加入resultMappings集合中
         resultMappings.add(buildResultMappingFromContext(resultChild, typeClass, flags));
       }
     }
+    // 实例化resultMap解析器
     ResultMapResolver resultMapResolver = new ResultMapResolver(builderAssistant, id, typeClass, extend, discriminator, resultMappings, autoMapping);
     try {
+      // 通过resultMap解析器实例化resultMap并将其注册到Configuration对象中
       return resultMapResolver.resolve();
     } catch (IncompleteElementException  e) {
       configuration.addIncompleteResultMap(resultMapResolver);
@@ -389,6 +429,7 @@ public class XMLMapperBuilder extends BaseBuilder {
     @SuppressWarnings("unchecked")
     Class<? extends TypeHandler<?>> typeHandlerClass = (Class<? extends TypeHandler<?>>) resolveClass(typeHandler);
     JdbcType jdbcTypeEnum = resolveJdbcType(jdbcType);
+    // 使用建造者模式构建对象
     return builderAssistant.buildResultMapping(resultType, property, column, javaTypeClass, jdbcTypeEnum, nestedSelect, nestedResultMap, notNullColumn, columnPrefix, typeHandlerClass, flags, resultSet, foreignColumn, lazy);
   }
   

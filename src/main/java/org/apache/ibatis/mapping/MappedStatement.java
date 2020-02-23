@@ -33,17 +33,20 @@ import org.apache.ibatis.session.Configuration;
  */
 public final class MappedStatement {
 
-  /** com/makenv/part1/mapper/ReoleMapper.xml **/
+  // 节点的namespace + id
   private String resource;
   private Configuration configuration;
-  /** com.makenv.part1.mapper.RoleMapper.getRole **/
+  // id属性
   private String id;
+  // fetchSize属性，查询数据的条数
   private Integer fetchSize;
+  // timeout属性，超时时间
   private Integer timeout;
   private StatementType statementType;
   private ResultSetType resultSetType;
   /** 最终执行的sql字符串就是由SqlSource提供 **/
   private SqlSource sqlSource;
+  // 对应的二级缓存
   private Cache cache;
   private ParameterMap parameterMap;
   private List<ResultMap> resultMaps;
@@ -58,6 +61,7 @@ public final class MappedStatement {
   private String databaseId;
   private Log statementLog;
   private LanguageDriver lang;
+  // 多结果集使用
   private String[] resultSets;
 
   MappedStatement() {

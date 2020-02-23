@@ -429,12 +429,12 @@ public class XMLConfigBuilder extends BaseBuilder {
   /**
    *   将包内的映射器接口实现全部注册为映射器
    *   <mappers>
-   *       <package name="com.makenv.part3.mapper"/>
+   *       <package name="com.javashitang.part3.mapper"/>
    *   </mappers>
    *
    *   使用相对于类路径的资源引用
    *   <mappers>
-   *      <mapper resource="com/makenv/part3/mapper/ProductMapper.xml"/>
+   *      <mapper resource="com/javashitang/part3/mapper/ProductMapper.xml"/>
    *   </mappers>
    *
    *   使用完全限定资源定位符（URL）
@@ -444,7 +444,7 @@ public class XMLConfigBuilder extends BaseBuilder {
    *
    *   使用映射器接口实现类的完全限定类名
    *   <mappers>
-   *      <mapper class="com.makenv.part3.mapper.ProductMapper"/>
+   *      <mapper class="com.javashitang.part3.mapper.ProductMapper"/>
    *   </mappers>
    *
    */

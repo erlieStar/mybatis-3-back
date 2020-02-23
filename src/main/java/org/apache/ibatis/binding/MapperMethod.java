@@ -42,8 +42,9 @@ import java.util.*;
  */
 public class MapperMethod {
 
-  /** com.makenv.part1.mapper.RoleMapper.getRole */
+  // 从Configuration中获取方法的命名空间，方法名以及SQL语句的类型
   private final SqlCommand command;
+  // 封装mapper接口方法的相关信息（入参，返回类型）
   private final MethodSignature method;
 
   public MapperMethod(Class<?> mapperInterface, Method method, Configuration config) {
@@ -81,6 +82,8 @@ public class MapperMethod {
         } else if (method.returnsCursor()) {
           result = executeForCursor(sqlSession, args);
         } else {
+          // 处理返回为单一对象的情况
+          // 通过参数解析器解析参数
           Object param = method.convertArgsToSqlCommandParam(args);
           result = sqlSession.selectOne(command.getName(), param);
         }
@@ -211,8 +214,9 @@ public class MapperMethod {
   }
 
   public static class SqlCommand {
-
+    // sql的名称，命名空间+方法名称
     private final String name;
+    // sql语句的类型
     private final SqlCommandType type;
 
     public SqlCommand(Configuration configuration, Class<?> mapperInterface, Method method) {
@@ -271,15 +275,19 @@ public class MapperMethod {
   }
 
   public static class MethodSignature {
-
+    // 返回值是否为集合或数组
     private final boolean returnsMany;
+    // 返回值是否为map
     private final boolean returnsMap;
+    // 返回值是否为空
     private final boolean returnsVoid;
+    // 返回值是否为游标类型
     private final boolean returnsCursor;
     private final Class<?> returnType;
     private final String mapKey;
     private final Integer resultHandlerIndex;
     private final Integer rowBoundsIndex;
+    // 该方法的参数解析器
     private final ParamNameResolver paramNameResolver;
 
     public MethodSignature(Configuration configuration, Class<?> mapperInterface, Method method) {

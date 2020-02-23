@@ -54,8 +54,9 @@ import org.apache.ibatis.type.TypeHandlerRegistry;
 public abstract class BaseExecutor implements Executor {
 
   private static final Log log = LogFactory.getLog(BaseExecutor.class);
-
+  // 事务对象
   protected Transaction transaction;
+  // 封装的executor对象
   protected Executor wrapper;
   /** 延迟加载队列 */
   protected ConcurrentLinkedQueue<DeferredLoad> deferredLoads;
@@ -63,7 +64,7 @@ public abstract class BaseExecutor implements Executor {
   protected PerpetualCache localCache;
   protected PerpetualCache localOutputParameterCache;
   protected Configuration configuration;
-
+  // 用于嵌套查询的层数
   protected int queryStack;
   private boolean closed;
 
@@ -143,6 +144,7 @@ public abstract class BaseExecutor implements Executor {
 
   @Override
   public <E> List<E> query(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler) throws SQLException {
+    // 获取sql语句信息，包括占位符，参数等信息
     BoundSql boundSql = ms.getBoundSql(parameter);
     CacheKey key = createCacheKey(ms, parameter, rowBounds, boundSql);
     return query(ms, parameter, rowBounds, resultHandler, key, boundSql);
@@ -155,6 +157,7 @@ public abstract class BaseExecutor implements Executor {
     if (closed) {
       throw new ExecutorException("Executor was closed.");
     }
+    // 非嵌套查询，并且FlushCache配置为true，则需要清空一级缓存
     if (queryStack == 0 && ms.isFlushCacheRequired()) {
       clearLocalCache();
     }
@@ -178,6 +181,7 @@ public abstract class BaseExecutor implements Executor {
       }
       // issue #601
       deferredLoads.clear();
+      // 如果当前sql的一级缓存配置为STATEMENT，查询完即清空一级缓存
       if (configuration.getLocalCacheScope() == LocalCacheScope.STATEMENT) {
         // issue #482
         clearLocalCache();
@@ -342,6 +346,7 @@ public abstract class BaseExecutor implements Executor {
     } finally {
       localCache.removeObject(key);
     }
+    // 将查询出的数据放到一级缓存
     localCache.putObject(key, list);
     if (ms.getStatementType() == StatementType.CALLABLE) {
       localOutputParameterCache.putObject(key, parameter);

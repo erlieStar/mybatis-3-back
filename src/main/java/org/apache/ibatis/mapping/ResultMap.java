@@ -39,17 +39,22 @@ import org.apache.ibatis.session.Configuration;
 public class ResultMap {
   private Configuration configuration;
 
+  // resultMap的id属性
   private String id;
+  // resultMap的type属性
   private Class<?> type;
   private List<ResultMapping> resultMappings;
   private List<ResultMapping> idResultMappings;
   private List<ResultMapping> constructorResultMappings;
   private List<ResultMapping> propertyResultMappings;
+  // 记录所有有映射关系的column字段
   private Set<String> mappedColumns;
+  // 记录所有有映射关系的property字段
   private Set<String> mappedProperties;
   private Discriminator discriminator;
   private boolean hasNestedResultMaps;
   private boolean hasNestedQueries;
+  // 是否打开了自动映射
   private Boolean autoMapping;
 
   private ResultMap() {

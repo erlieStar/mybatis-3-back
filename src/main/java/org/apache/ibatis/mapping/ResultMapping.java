@@ -27,6 +27,8 @@ import org.apache.ibatis.type.TypeHandlerRegistry;
 
 /**
  * @author Clinton Begin
+ *
+ * 对应的是mapper.xml中resultMap标签中的一行result
  */
 public class ResultMapping {
 
@@ -44,6 +46,7 @@ public class ResultMapping {
   private List<ResultMapping> composites;
   private String resultSet;
   private String foreignColumn;
+  // 对应节点的fetchType属性，是否延迟加载
   private boolean lazy;
 
   ResultMapping() {

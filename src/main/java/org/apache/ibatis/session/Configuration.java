@@ -153,11 +153,13 @@ public class Configuration {
   protected final TypeAliasRegistry typeAliasRegistry = new TypeAliasRegistry();
   protected final LanguageDriverRegistry languageRegistry = new LanguageDriverRegistry();
 
-  /** 假如有一个com.makenv.part1.mapper.RoleMapper的接口，里面有一个方法为getRole **/
-  /** key值为com.makenv.part1.mapper.RoleMapper.getRole 和 getRole **/
+  /** 假如有一个com.javashitang.part1.mapper.RoleMapper的接口，里面有一个方法为getRole **/
+  /** key值为com.javashitang.part1.mapper.RoleMapper.getRole 和 getRole **/
   /** 命名空间 + id **/
   protected final Map<String, MappedStatement> mappedStatements = new StrictMap<MappedStatement>("Mapped Statements collection");
+  // mapper文件中配置的cache节点的二级缓存，key为namespace
   protected final Map<String, Cache> caches = new StrictMap<Cache>("Caches collection");
+  // mapper文件中配置的所有resultMap对象，key为namespace + id
   protected final Map<String, ResultMap> resultMaps = new StrictMap<ResultMap>("Result Maps collection");
   protected final Map<String, ParameterMap> parameterMaps = new StrictMap<ParameterMap>("Parameter Maps collection");
   protected final Map<String, KeyGenerator> keyGenerators = new StrictMap<KeyGenerator>("Key Generators collection");

@@ -50,7 +50,7 @@ public final class ConnectionLogger extends BaseJdbcLogger implements Invocation
       if (Object.class.equals(method.getDeclaringClass())) {
         return method.invoke(this, params);
       }
-      // 如果是调用prepareStatement，prepareCall，createStatement的方法，打印要执行的SQL语句
+      // 如果是调用prepareStatement，prepareCall的方法，打印要执行的SQL语句
       // 并返回PreparedStatement的代理对象，让PreparedStatement也具备日志能力，打印参数
       if ("prepareStatement".equals(method.getName())) {
         if (isDebugEnabled()) {

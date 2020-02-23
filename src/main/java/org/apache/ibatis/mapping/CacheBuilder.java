@@ -94,9 +94,12 @@ public class CacheBuilder {
     Cache cache = newBaseCacheInstance(implementation, id);
     setCacheProperties(cache);
     // issue #352, do not apply decorators to custom caches
+    // 如果cache是PerpetualCache的实现，则为其添加标准的装饰器
     if (PerpetualCache.class.equals(cache.getClass())) {
       for (Class<? extends Cache> decorator : decorators) {
+        // 给缓存加上装饰器
         cache = newCacheDecoratorInstance(decorator, cache);
+        // 给缓存设置属性
         setCacheProperties(cache);
       }
       cache = setStandardDecorators(cache);

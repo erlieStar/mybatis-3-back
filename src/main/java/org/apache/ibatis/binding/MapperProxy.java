@@ -50,6 +50,7 @@ public class MapperProxy<T> implements InvocationHandler, Serializable {
 
     // 代理以后，所有Mapper方法调用时，都会执行这个invoke方法
     try {
+      // 如果是Object本身的方法不增强
       if (Object.class.equals(method.getDeclaringClass())) {
         return method.invoke(this, args);
       } else if (isDefaultMethod(method)) {
@@ -58,6 +59,7 @@ public class MapperProxy<T> implements InvocationHandler, Serializable {
     } catch (Throwable t) {
       throw ExceptionUtil.unwrapThrowable(t);
     }
+    // 从缓存中获取mapperMethod对象，如果缓存中没有，则创建一个，并添加到缓存中
     final MapperMethod mapperMethod = cachedMapperMethod(method);
     return mapperMethod.execute(sqlSession, args);
   }
