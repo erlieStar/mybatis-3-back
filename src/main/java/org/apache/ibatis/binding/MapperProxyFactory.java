@@ -26,9 +26,11 @@ import org.apache.ibatis.session.SqlSession;
  * @author Lasse Voss
  */
 public class MapperProxyFactory<T> {
-  // mapper接口的class对象
+  // mapper接口对应的class对象
   private final Class<T> mapperInterface;
-  //
+  // 缓存
+  // key -> mapper接口中某方法对应的method对象
+  // value -> MapperMethod对象
   private final Map<Method, MapperMethod> methodCache = new ConcurrentHashMap<Method, MapperMethod>();
 
   public MapperProxyFactory(Class<T> mapperInterface) {

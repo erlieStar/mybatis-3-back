@@ -56,11 +56,16 @@ import org.apache.ibatis.reflection.Jdk;
  */
 public final class TypeHandlerRegistry {
 
+  // 记录jdbcType与TypeHandler之间的对应关系，其中JdbcType是一个枚举类型，定义了JDBC类型
+  // 将数据从jdbc类型转换成Java类型
   private final Map<JdbcType, TypeHandler<?>> JDBC_TYPE_HANDLER_MAP = new EnumMap<JdbcType, TypeHandler<?>>(JdbcType.class);
+  // java类型向指定jdbc类型转换时，需要试用的TypeHandler，
+  // Java类型中的string可能转换成数据库的char，varchar等多种类型，所以存在一对多关系
   private final Map<Type, Map<JdbcType, TypeHandler<?>>> TYPE_HANDLER_MAP = new ConcurrentHashMap<Type, Map<JdbcType, TypeHandler<?>>>();
   private final TypeHandler<Object> UNKNOWN_TYPE_HANDLER = new UnknownTypeHandler(this);
+  // 全部的TypeHandler类型以及该类型相应的TypeHandler对象
   private final Map<Class<?>, TypeHandler<?>> ALL_TYPE_HANDLERS_MAP = new HashMap<Class<?>, TypeHandler<?>>();
-
+  // 空TypeHandler集合的标识
   private static final Map<JdbcType, TypeHandler<?>> NULL_TYPE_HANDLER_MAP = Collections.emptyMap();
 
   private Class<? extends TypeHandler> defaultEnumTypeHandler = EnumTypeHandler.class;

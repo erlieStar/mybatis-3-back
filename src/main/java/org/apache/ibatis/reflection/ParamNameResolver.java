@@ -48,10 +48,16 @@ public class ParamNameResolver {
 
   /** 解析参数的名字，在xml中 #{} 使用，key为第几个，从0开始，value为@Param()中指定的或者自动生成的 **/
   private final SortedMap<Integer, String> names;
-
+  // 对应方法的参数列表中是否使用了@Param注解
   private boolean hasParamAnnotation;
 
+  /**
+   * 假设mapper接口的参数为@Param("id) @Param("name")
+   * 则最后返回的names为
+   * 0->id 1->name
+   */
   public ParamNameResolver(Configuration config, Method method) {
+    // 获取参数列表中每个参数的类型
     final Class<?>[] paramTypes = method.getParameterTypes();
 
     // 第一个维度是参数的个数
@@ -61,11 +67,13 @@ public class ParamNameResolver {
     int paramCount = paramAnnotations.length;
     // get names from @Param annotations
     for (int paramIndex = 0; paramIndex < paramCount; paramIndex++) {
+      // 如果参数是RowBounds类型或者ResultHandler类型，则跳过对该参数的分析
       if (isSpecialParameter(paramTypes[paramIndex])) {
         // skip special parameters
         continue;
       }
       String name = null;
+      // 遍历该参数对应的注解集合
       for (Annotation annotation : paramAnnotations[paramIndex]) {
         if (annotation instanceof Param) {
           hasParamAnnotation = true;
@@ -73,6 +81,9 @@ public class ParamNameResolver {
           break;
         }
       }
+      // 参数没有用@Param生成别名，则mybatis自动生成
+      // 3.4.1版本及其之前的版本 useActualParamName=false，xml中的参数用#{0}-#{n}表示
+      // 3.4.2版本及其之后的版本 useActualParamName=true，xml中的参数用#{arg0}-#{argn} 或者 #{param1}-#{param2}表示
       if (name == null) {
         // @Param was not specified.
         // useActualParamName 设置为true时，传递参数需要用#{arg0}-#{argn} 或者 #{param1}-#{param2}
@@ -100,6 +111,7 @@ public class ParamNameResolver {
   }
 
   private static boolean isSpecialParameter(Class<?> clazz) {
+    // 如果是RowBounds类及其子类或者ResultHandler类及其子类放回true
     return RowBounds.class.isAssignableFrom(clazz) || ResultHandler.class.isAssignableFrom(clazz);
   }
 
@@ -118,15 +130,34 @@ public class ParamNameResolver {
    * ...).
    * </p>
    */
+  /**
+   * 假如mapper接口参数是
+   * 1，"Java面试通关"
+   * 返回的map如下
+   * arg0->1
+   * arg1->Java面试通关
+   * param1->1
+   * param2->Java面试通关
+   *
+   *
+   * 假如mapper接口参数是
+   * @Param("id")1，@Param("name")"Java面试通关"
+   * 返回的map如下
+   * id->1
+   * name->Java面试通关
+   * param1->1
+   * param2->Java面试通关
+   */
   public Object getNamedParams(Object[] args) {
     final int paramCount = names.size();
     if (args == null || paramCount == 0) {
       // 如果没有参数
       return null;
     } else if (!hasParamAnnotation && paramCount == 1) {
-      // 如果只有一个参数
+      // 未使用@Param且只有一个参数
       return args[names.firstKey()];
     } else {
+      // 处理使用@Param注解指定了参数名称或有多个参数的情况
       final Map<String, Object> param = new ParamMap<Object>();
       int i = 0;
       for (Map.Entry<Integer, String> entry : names.entrySet()) {
@@ -136,6 +167,7 @@ public class ParamNameResolver {
         // GENERIC_NAME_PREFIX = param
         final String genericParamName = GENERIC_NAME_PREFIX + String.valueOf(i + 1);
         // ensure not to overwrite parameter named with @Param
+        // 如果@Param注解指定的参数名称就是 param+索引 格式的，则不需要再添加
         if (!names.containsValue(genericParamName)) {
           param.put(genericParamName, args[entry.getKey()]);
         }

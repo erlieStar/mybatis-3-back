@@ -53,6 +53,7 @@ public class Reflector {
   // 可写属性名称集合，存在set方法即可写
   private final String[] writeablePropertyNames;
   // 保存属性相关的set方法
+  // key是属性名称 value是Invoker对象
   private final Map<String, Invoker> setMethods = new HashMap<String, Invoker>();
   // 保存属性相关的get方法
   private final Map<String, Invoker> getMethods = new HashMap<String, Invoker>();
@@ -67,7 +68,9 @@ public class Reflector {
 
   public Reflector(Class<?> clazz) {
     type = clazz;
+    // 查找clazz的默认构造方法（无参构造方法）
     addDefaultConstructor(clazz);
+    // 处理clazz中的getter方法，填充getMethods集合和getTypes集合
     addGetMethods(clazz);
     addSetMethods(clazz);
     // 处理没有get，set方法的属性
@@ -78,6 +81,7 @@ public class Reflector {
       caseInsensitivePropertyMap.put(propName.toUpperCase(Locale.ENGLISH), propName);
     }
     for (String propName : writeablePropertyNames) {
+      // 所有大写格式的可写属性名称
       caseInsensitivePropertyMap.put(propName.toUpperCase(Locale.ENGLISH), propName);
     }
   }
@@ -101,7 +105,9 @@ public class Reflector {
   }
 
   private void addGetMethods(Class<?> cls) {
+    // 方法的唯一签名及其对应的Method对象
     Map<String, List<Method>> conflictingGetters = new HashMap<String, List<Method>>();
+    // 获取当前类及其父类中定义的Method对象
     Method[] methods = getClassMethods(cls);
     for (Method method : methods) {
       if (method.getParameterTypes().length > 0) {
@@ -323,15 +329,17 @@ public class Reflector {
     Map<String, Method> uniqueMethods = new HashMap<String, Method>();
     Class<?> currentClass = cls;
     while (currentClass != null && currentClass != Object.class) {
+      // 获取currentClass这个类中定义的全部方法
       addUniqueMethods(uniqueMethods, currentClass.getDeclaredMethods());
 
       // we also need to look for interface methods -
       // because the class may be abstract
       Class<?>[] interfaces = currentClass.getInterfaces();
       for (Class<?> anInterface : interfaces) {
+        // 获取接口中定义的方法
         addUniqueMethods(uniqueMethods, anInterface.getMethods());
       }
-
+      // 获取父类，继续循环
       currentClass = currentClass.getSuperclass();
     }
 
@@ -343,10 +351,13 @@ public class Reflector {
   private void addUniqueMethods(Map<String, Method> uniqueMethods, Method[] methods) {
     for (Method currentMethod : methods) {
       if (!currentMethod.isBridge()) {
+        // 通过getSignature得到的方法签名是全局唯一的，可以作为该方法的唯一标识
         String signature = getSignature(currentMethod);
         // check to see if the method is already known
         // if it is known, then an extended class must have
         // overridden a method
+        // 检测在子类中是否已经添加过该方法，在子类中添加过表示子类覆盖了该方法
+        // 无须向uniqueMethods集合中添加该方法了
         if (!uniqueMethods.containsKey(signature)) {
           if (canAccessPrivateMethods()) {
             try {
@@ -362,6 +373,9 @@ public class Reflector {
     }
   }
 
+  // 得到方法的签名
+  // 返回值类型#方法名称:参数类型列表，如本方法的签名为
+  // java.lang.string#getSignature:java.lang.reflect.Method
   private String getSignature(Method method) {
     StringBuilder sb = new StringBuilder();
     Class<?> returnType = method.getReturnType();

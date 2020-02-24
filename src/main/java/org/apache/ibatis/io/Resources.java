@@ -29,6 +29,8 @@ import java.util.Properties;
  * A class to simplify access to resources through the classloader.
  *
  * @author Clinton Begin
+ *
+ * 是一个工具类，提供的静态工具都是通过调用静态工具ClassLoaderWrapper对象的相应方法实现的
  */
 public class Resources {
 

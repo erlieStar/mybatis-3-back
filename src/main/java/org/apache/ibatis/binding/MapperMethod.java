@@ -42,9 +42,9 @@ import java.util.*;
  */
 public class MapperMethod {
 
-  // 从Configuration中获取方法的命名空间，方法名以及SQL语句的类型
+  // SQL语句的名称和类型
   private final SqlCommand command;
-  // 封装mapper接口方法的相关信息（入参，返回类型）
+  // mapper接口方法的相关信息（入参，返回类型）
   private final MethodSignature method;
 
   public MapperMethod(Class<?> mapperInterface, Method method, Configuration config) {
@@ -52,12 +52,13 @@ public class MapperMethod {
     this.method = new MethodSignature(config, mapperInterface, method);
   }
 
-  /** 这里用到了命令模式 */
+  // 这里用到了命令模式
+  // args为方法传入的参数
   public Object execute(SqlSession sqlSession, Object[] args) {
     Object result;
     switch (command.getType()) {
       case INSERT: {
-      Object param = method.convertArgsToSqlCommandParam(args);
+        Object param = method.convertArgsToSqlCommandParam(args);
         result = rowCountResult(sqlSession.insert(command.getName(), param));
         break;
       }
@@ -101,6 +102,8 @@ public class MapperMethod {
     return result;
   }
 
+  // 当执行 INSERT UPDATE DELETE 类型的SQL语句时，返回结果都会经过这个方法
+  // sqlSession中的insert等方法返回的是int值，rowCountResult方法会将int值转换成Mapper接口中对应的返回值
   private Object rowCountResult(int rowCount) {
     final Object result;
     if (method.returnsVoid()) {
@@ -126,6 +129,7 @@ public class MapperMethod {
           + " or a resultType attribute in XML so a ResultHandler can be used as a parameter.");
     }
     Object param = method.convertArgsToSqlCommandParam(args);
+    // 检测参数列表中是否有RowBounds类型的参数
     if (method.hasRowBounds()) {
       RowBounds rowBounds = method.extractRowBounds(args);
       sqlSession.select(command.getName(), param, rowBounds, method.extractResultHandler(args));
@@ -226,6 +230,7 @@ public class MapperMethod {
       MappedStatement ms = resolveMappedStatement(mapperInterface, methodName, declaringClass,
           configuration);
       if (ms == null) {
+        // 处理@Flush注解
         if (method.getAnnotation(Flush.class) != null) {
           name = null;
           type = SqlCommandType.FLUSH;
@@ -253,6 +258,7 @@ public class MapperMethod {
 
     private MappedStatement resolveMappedStatement(Class<?> mapperInterface, String methodName,
         Class<?> declaringClass, Configuration configuration) {
+      // 命名空间 + 方法名
       String statementId = mapperInterface.getName() + "." + methodName;
       if (configuration.hasStatement(statementId)) {
         return configuration.getMappedStatement(statementId);
@@ -260,7 +266,7 @@ public class MapperMethod {
         return null;
       }
 
-      // 查看父类中是否有
+      // 指定方法是在父接口中定义的
       for (Class<?> superInterface : mapperInterface.getInterfaces()) {
         if (declaringClass.isAssignableFrom(superInterface)) {
           MappedStatement ms = resolveMappedStatement(superInterface, methodName,
@@ -283,14 +289,20 @@ public class MapperMethod {
     private final boolean returnsVoid;
     // 返回值是否为游标类型
     private final boolean returnsCursor;
+    // 返回值类型
     private final Class<?> returnType;
+    // 如果返回值是Map，但要指定map的key，可以用@MapKey注解
+    // 详见 https://www.cnblogs.com/Lyn4ever/p/11614416.html
     private final String mapKey;
+    // 参数列表中ResultHandler类型参数的位置
     private final Integer resultHandlerIndex;
+    // 参数列表中RowBounds类型参数的位置
     private final Integer rowBoundsIndex;
     // 该方法的参数解析器
     private final ParamNameResolver paramNameResolver;
 
     public MethodSignature(Configuration configuration, Class<?> mapperInterface, Method method) {
+      // 解析返回值类型
       Type resolvedReturnType = TypeParameterResolver.resolveReturnType(method, mapperInterface);
       if (resolvedReturnType instanceof Class<?>) {
         this.returnType = (Class<?>) resolvedReturnType;
@@ -359,8 +371,10 @@ public class MapperMethod {
       for (int i = 0; i < argTypes.length; i++) {
         if (paramType.isAssignableFrom(argTypes[i])) {
           if (index == null) {
+            // 记录paramType类型参数在对应方法的参数列表
             index = i;
           } else {
+            // RowBounds和ResultHandler类型的参数只能有一个，不能重复出现
             throw new BindingException(method.getName() + " cannot have multiple " + paramType.getSimpleName() + " parameters");
           }
         }
@@ -370,6 +384,7 @@ public class MapperMethod {
 
     private String getMapKey(Method method) {
       String mapKey = null;
+      // 返回是Map接口的子类
       if (Map.class.isAssignableFrom(method.getReturnType())) {
         final MapKey mapKeyAnnotation = method.getAnnotation(MapKey.class);
         if (mapKeyAnnotation != null) {
