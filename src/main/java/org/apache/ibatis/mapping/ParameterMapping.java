@@ -28,7 +28,7 @@ import org.apache.ibatis.type.TypeHandlerRegistry;
 public class ParameterMapping {
 
   private Configuration configuration;
-
+  // 参数的名字@Param("id")则为id
   private String property;
   private ParameterMode mode;
   private Class<?> javaType = Object.class;

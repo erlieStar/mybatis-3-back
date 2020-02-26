@@ -34,7 +34,8 @@ import org.apache.ibatis.session.RowBounds;
 /**
  * @author Clinton Begin
  * 简单语句处理器
- * 这个类中boundSql.getSql() 不存在占位符
+ * 底层使用java.sql.Statement对象来完成数据库的相关操作，所以SQL语句中不存在占位符
+ * 相应的parameterize() 方法是空实现
  */
 public class SimpleStatementHandler extends BaseStatementHandler {
 

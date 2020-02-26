@@ -38,9 +38,11 @@ import org.apache.ibatis.type.TypeHandlerRegistry;
  */
 public class DefaultParameterHandler implements ParameterHandler {
 
+  // 管理Mybatis中的全部TypeHandler对象
   private final TypeHandlerRegistry typeHandlerRegistry;
-
+  // 记录SQL节点相应的配置信息
   private final MappedStatement mappedStatement;
+  // 用户传入的实际参数
   private final Object parameterObject;
   private final BoundSql boundSql;
   private final Configuration configuration;
@@ -67,6 +69,7 @@ public class DefaultParameterHandler implements ParameterHandler {
         ParameterMapping parameterMapping = parameterMappings.get(i);
         if (parameterMapping.getMode() != ParameterMode.OUT) {
           Object value;
+          // 获取对应的参数名
           String propertyName = parameterMapping.getProperty();
           if (boundSql.hasAdditionalParameter(propertyName)) { // issue #448 ask first for additional params
             value = boundSql.getAdditionalParameter(propertyName);

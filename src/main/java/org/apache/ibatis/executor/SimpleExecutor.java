@@ -86,7 +86,7 @@ public class SimpleExecutor extends BaseExecutor {
     // 获取Connection对象的动态代理，添加日志能力
     Connection connection = getConnection(statementLog);
     stmt = handler.prepare(connection, transaction.getTimeout());
-    // 通过parameterHandler处理占位符
+    // 通过parameterHandler处理占位符，此时的statement可以直接调用execute()执行
     handler.parameterize(stmt);
     return stmt;
   }

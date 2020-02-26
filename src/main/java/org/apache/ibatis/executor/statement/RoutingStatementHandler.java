@@ -36,6 +36,8 @@ public class RoutingStatementHandler implements StatementHandler {
 
   private final StatementHandler delegate;
 
+  // 策略模式的体现，根据不同的类型，创建不同的实现类
+  // 默认为PreparedStatementHandler从MappedStatement类中即可看到默认值
   public RoutingStatementHandler(Executor executor, MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) {
 
     switch (ms.getStatementType()) {

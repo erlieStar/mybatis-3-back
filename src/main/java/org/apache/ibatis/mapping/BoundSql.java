@@ -35,9 +35,16 @@ import org.apache.ibatis.session.Configuration;
  */
 public class BoundSql {
 
-  // sql仅仅包含 ? 占位符，可以直接交给数据库执行
+  // sql仅仅包含 ? 占位符
+  // select id, authorId, `name` from book where id = ? and name = ?
   private final String sql;
   private final List<ParameterMapping> parameterMappings;
+  // @Param("id") @Param("name)
+  // parameterObject
+  // id->1
+  // name->Java面试通关
+  // param1->1
+  // param2->Java面试通关
   private final Object parameterObject;
   private final Map<String, Object> additionalParameters;
   private final MetaObject metaParameters;

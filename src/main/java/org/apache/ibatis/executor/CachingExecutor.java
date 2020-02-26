@@ -36,7 +36,7 @@ import org.apache.ibatis.transaction.Transaction;
  * @author Clinton Begin
  * @author Eduardo Macarron
  * 装饰者模式
- * CachingExecutor 是具体装饰者
+ * CachingExecutor 是具体装饰者，为Executor添加了二级缓存的功能
  */
 public class CachingExecutor implements Executor {
 
