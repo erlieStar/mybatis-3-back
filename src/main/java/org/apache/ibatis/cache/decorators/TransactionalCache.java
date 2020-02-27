@@ -40,9 +40,13 @@ public class TransactionalCache implements Cache {
 
   private static final Log log = LogFactory.getLog(TransactionalCache.class);
 
+  // 二级缓存对应的cache对象
   private final Cache delegate;
+  // 当该字段为true时，表示当前TransactionalCache不可查询，提交事务时会将底层Cache清空
   private boolean clearOnCommit;
+  // 将记录暂时添加到这，在事务提交时，将数据添加到二级缓存中
   private final Map<Object, Object> entriesToAddOnCommit;
+  // 记录缓存未命中的CacheKey对象
   private final Set<Object> entriesMissedInCache;
 
   public TransactionalCache(Cache delegate) {
@@ -117,6 +121,7 @@ public class TransactionalCache implements Cache {
     entriesMissedInCache.clear();
   }
 
+  // 将entriesToAddOnCommit记录的对象保存到二级缓存中
   private void flushPendingEntries() {
     for (Map.Entry<Object, Object> entry : entriesToAddOnCommit.entrySet()) {
       delegate.putObject(entry.getKey(), entry.getValue());
