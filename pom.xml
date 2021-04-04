@@ -16,14 +16,15 @@
        limitations under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
     <groupId>org.mybatis</groupId>
     <artifactId>mybatis-parent</artifactId>
     <version>29</version>
-    <relativePath />
+    <relativePath/>
   </parent>
 
   <artifactId>mybatis</artifactId>
@@ -131,6 +132,7 @@
   </distributionManagement>
 
   <properties>
+
     <maven.compiler.testTarget>1.8</maven.compiler.testTarget>
     <maven.compiler.testSource>1.8</maven.compiler.testSource>
     <maven.compiler.testCompilerArgument>-parameters</maven.compiler.testCompilerArgument>
@@ -264,6 +266,11 @@
       <version>2.5</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>mysql</groupId>
+      <artifactId>mysql-connector-java</artifactId>
+      <version>5.1.35</version>
+    </dependency>
   </dependencies>
 
   <build>
@@ -273,6 +280,8 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
           <testCompilerArgument>${maven.compiler.testCompilerArgument}</testCompilerArgument>
+          <source>1.8</source>
+          <target>1.8</target>
         </configuration>
       </plugin>
       <plugin>
@@ -389,7 +398,7 @@
       <properties>
         <maven.compiler.testTarget>1.6</maven.compiler.testTarget>
         <maven.compiler.testSource>1.6</maven.compiler.testSource>
-        <maven.compiler.testCompilerArgument />
+        <maven.compiler.testCompilerArgument/>
       </properties>
       <build>
         <pluginManagement>
@@ -412,11 +421,11 @@
           </plugins>
         </pluginManagement>
         <plugins>
-            <plugin>
-              <groupId>org.apache.felix</groupId>
-              <artifactId>maven-bundle-plugin</artifactId>
-              <version>2.5.4</version> <!-- For java 6, remain at older version -->
-            </plugin>
+          <plugin>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>maven-bundle-plugin</artifactId>
+            <version>2.5.4</version> <!-- For java 6, remain at older version -->
+          </plugin>
         </plugins>
       </build>
     </profile>
@@ -428,7 +437,7 @@
       <properties>
         <maven.compiler.testTarget>1.7</maven.compiler.testTarget>
         <maven.compiler.testSource>1.7</maven.compiler.testSource>
-        <maven.compiler.testCompilerArgument />
+        <maven.compiler.testCompilerArgument/>
       </properties>
       <build>
         <pluginManagement>
