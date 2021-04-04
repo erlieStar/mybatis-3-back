@@ -16,22 +16,23 @@ import java.io.InputStream;
  */
 public class DebugDemo {
 
-    public static void main(String[] args) throws IOException {
-        String resource = "mybatis-config.xml";
-        InputStream inputStream = Resources.getResourceAsStream(resource);
-        SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
-        SqlSession sqlSession = null;
-        try {
-            sqlSession = sqlSessionFactory.openSession();
-            RoleMapper roleMapper = sqlSession.getMapper(RoleMapper.class);
-            Role role = roleMapper.getRole(2L);
-            System.out.println(role.getRoleName());
-        } catch(Exception e) {
-            e.printStackTrace();
-        } finally {
-            if (sqlSession != null) {
-                sqlSession.close();
-            }
-        }
+  public static void main(String[] args) throws IOException {
+    String resource = "mybatis-config.xml";
+    InputStream inputStream = Resources.getResourceAsStream(resource);
+    SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
+    SqlSession sqlSession = null;
+    try {
+      // 返回的是 DefaultSqlSession
+      sqlSession = sqlSessionFactory.openSession();
+      RoleMapper roleMapper = sqlSession.getMapper(RoleMapper.class);
+      Role role = roleMapper.getRole(2L);
+      System.out.println(role.getRoleName());
+    } catch (Exception e) {
+      e.printStackTrace();
+    } finally {
+      if (sqlSession != null) {
+        sqlSession.close();
+      }
     }
+  }
 }
