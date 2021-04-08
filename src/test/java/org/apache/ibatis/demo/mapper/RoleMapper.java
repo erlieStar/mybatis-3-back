@@ -8,23 +8,13 @@ import java.util.List;
 
 public interface RoleMapper {
 
-    Role getRole(long id);
+  Role selectById(long id);
 
-    List<Role> getRole3(String roleName);
+  List<Role> selectAllRole();
 
-    int deleteRole(long id);
+  List<Role> selectByIds(@Param("ids") List<Long> ids);
 
-    int insertRole(Role role);
+  int deleteById(long id);
 
-    List<Role> findRoles(@Param("roleName") String roleName);
-
-    List<Role> findRoles2(Role role);
-
-    List<Role> findRoles3(List<Integer> idList);
-
-    List<Role> findRoles4(@Param("type") String str);
-
-    List<Role> findAllRoles();
-
-    int updateRole(Role role);
+  int insertRole(Role role);
 }

@@ -2,80 +2,36 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.apache.ibatis.demo.mapper.RoleMapper">
 
-    <resultMap id="roleResultMap" type="org.apache.ibatis.demo.domain.Role">
-        <id property="id" column="id"/>
-        <result property="roleName" column="role_name"/>
-        <result property="note" column="note"/>
-    </resultMap>
+  <resultMap id="roleResultMap" type="org.apache.ibatis.demo.domain.Role">
+    <id property="id" column="id"/>
+    <result property="roleName" column="role_name"/>
+    <result property="note" column="note"/>
+  </resultMap>
 
-    <select id="findRoles" parameterType="string" resultMap="roleResultMap">
-        select id, role_name, note from role where 1 = 1
-        <if test="roleName != null and roleName != ''">
-            and role_name like concat('%',#{roleName},'%')
-        </if>
-    </select>
+  <select id="selectById" parameterType="long" resultType="role">
+    select id, role_name as roleName, note from role
+    where id = #{id}
+  </select>
 
-    <select id="findRoles2" parameterType="string" resultMap="roleResultMap">
-        select id, role_name, note from role where 1 = 1
-        <choose>
-            <when test="id != null and id != ''">
-                and id = #{id}
-            </when>
-            <when test="roleName != null and roleName != ''">
-                and role_name like concat('%',#{roleName},'%')
-            </when>
-            <otherwise>
-                and note is not null
-            </otherwise>
-        </choose>
-    </select>
+  <select id="selectAllRole" parameterType="long" resultType="role" statementType="">
+    select id, role_name as roleName, note from role
+  </select>
 
-    <select id="getRole" parameterType="long" resultType="role">
-        select id, role_name as roleName, note from role where id = #{id}
-    </select>
+  <select id="selectByIds" resultMap="roleResultMap">
+    select id, role_name, note
+    from role where id in
+    <foreach collection="ids" item="item" open="(" close=")" separator=",">
+      #{item}
+    </foreach>
+  </select>
 
-    <select id="getRole3" parameterType="string" resultMap="roleResultMap">
-        <bind name="pattern" value="'%' + _parameter + '%'"/>
-        select id, role_name, note from role where role_name LIKE #{pattern}
-    </select>
+  <delete id="deleteById" parameterType="long">
+    delete from role where id = #{id}
+  </delete>
 
-    <select id="findRoles4" parameterType="string" resultMap="roleResultMap">
-        select id, role_name, note from role
-        <if test="type = 'y'">
-            where 1 = 1
-        </if>
-    </select>
-
-    <select id="findAllRoles" resultMap="roleResultMap">
-        select id, role_name, note from role
-    </select>
-
-    <select id="findRoles3" resultType="role">
-        select * from role where id IN
-        <foreach collection="collection" item="role" index="index" open="(" separator="," close=")">
-            #{role}
-        </foreach>
-    </select>
-
-    <delete id="deleteRole" parameterType="long">
-        delete from role where id = #{id}
-    </delete>
-
-    <insert id="insertRole" parameterType="role" useGeneratedKeys="true" keyProperty="id">
-        insert into role (role_name, note) values (#{roleName}, #{note})
-    </insert>
-
-    <update id="updateRole" parameterType="role">
-        update role
-        <trim prefix="set" suffixOverrides=",">
-            <if test="roleName != null and roleName != ''">
-                role_name = #{roleName},
-            </if>
-            <if test="note != null and note != ''">
-                note = #{note}
-            </if>
-        </trim>
-        where id = #{id}
-    </update>
+  <insert id="insertRole" parameterType="role" useGeneratedKeys="true" keyProperty="id">
+    insert into role (role_name, note)
+    values (#{roleName}, #{note})
+  </insert>
 
 </mapper>

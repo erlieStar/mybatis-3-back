@@ -24,9 +24,11 @@ public class DebugDemo {
     try {
       // 返回的是 DefaultSqlSession
       sqlSession = sqlSessionFactory.openSession();
+      Role role1 = (Role) sqlSession.selectOne("org.apache.ibatis.demo.mapper.RoleMapper.selectById", 2L);
+      System.out.println(role1);
       RoleMapper roleMapper = sqlSession.getMapper(RoleMapper.class);
-      Role role = roleMapper.getRole(2L);
-      System.out.println(role.getRoleName());
+      Role role = roleMapper.selectById(2L);
+      System.out.println(role);
     } catch (Exception e) {
       e.printStackTrace();
     } finally {

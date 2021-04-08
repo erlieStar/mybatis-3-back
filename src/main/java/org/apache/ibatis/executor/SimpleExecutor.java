@@ -84,6 +84,7 @@ public class SimpleExecutor extends BaseExecutor {
   private Statement prepareStatement(StatementHandler handler, Log statementLog) throws SQLException {
     Statement stmt;
     // 获取Connection对象的动态代理，添加日志能力
+    // Connection可以获取Statement
     Connection connection = getConnection(statementLog);
     stmt = handler.prepare(connection, transaction.getTimeout());
     // 通过parameterHandler处理占位符，此时的statement可以直接调用execute()执行

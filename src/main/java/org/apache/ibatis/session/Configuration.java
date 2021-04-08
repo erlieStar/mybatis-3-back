@@ -568,7 +568,7 @@ public class Configuration {
   }
 
   public StatementHandler newStatementHandler(Executor executor, MappedStatement mappedStatement, Object parameterObject, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) {
-    // 初始化 RoutingStatementHandler 对象的时候会根据上下文环境决定创建哪个StatementHandler对象
+    // 根据MappedStatement的statementType属性决定，生成的代理类是哪种类型？
     StatementHandler statementHandler = new RoutingStatementHandler(executor, mappedStatement, parameterObject, rowBounds, resultHandler, boundSql);
     statementHandler = (StatementHandler) interceptorChain.pluginAll(statementHandler);
     return statementHandler;

@@ -146,6 +146,7 @@ public abstract class BaseExecutor implements Executor {
   public <E> List<E> query(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler) throws SQLException {
     // 获取sql语句信息，包括占位符，参数等信息
     BoundSql boundSql = ms.getBoundSql(parameter);
+    // 构建缓存的key
     CacheKey key = createCacheKey(ms, parameter, rowBounds, boundSql);
     return query(ms, parameter, rowBounds, resultHandler, key, boundSql);
  }
@@ -181,6 +182,7 @@ public abstract class BaseExecutor implements Executor {
       }
       // issue #601
       deferredLoads.clear();
+      // <setting name="localCacheScope" value="STATEMENT"/>
       // 如果当前sql的一级缓存配置为STATEMENT，查询完即清空一级缓存
       if (configuration.getLocalCacheScope() == LocalCacheScope.STATEMENT) {
         // issue #482
